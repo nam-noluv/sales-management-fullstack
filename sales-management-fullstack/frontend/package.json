@@ -1,0 +1,37 @@
+{
+  "name": "frontend-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "jest --config jest.config.js --runInBand"
+  },
+  "dependencies": {
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-jest": "^30.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.0",
+    "jest-environment-jsdom": "^30.4.1",
+    "jsdom": "^21.1.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
+  }
+}
