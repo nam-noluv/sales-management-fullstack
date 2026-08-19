@@ -21,10 +21,12 @@ export function useLogin() {
 
         try {
             const data = await loginRequest(email, password);
+
             saveSession(data);
-            router.push('/dashboard');
+
+            router.push("/user/dashboard");
         } catch (err) {
-            setError(err.message || 'Lỗi kết nối đến server');
+            setError(err.message || "Lỗi kết nối đến server");
             console.error(err);
         } finally {
             setLoading(false);

@@ -15,8 +15,8 @@ export function useAuth() {
             const res = await fetchWithToken('/auth/profile');
             if (!res.ok && res.status === 401) {
                 localStorage.removeItem('token');
-                router.push('/login');
-                return;
+                if (!token) { setUser(null); return; }
+                if (!res.ok) { localStorage.removeItem('token'); setUser(null); return; }
             }
             const data = await res.json();
             setUser(data);
@@ -28,6 +28,7 @@ export function useAuth() {
     }, [router]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         void fetchProfile();
     }, [fetchProfile]);
 

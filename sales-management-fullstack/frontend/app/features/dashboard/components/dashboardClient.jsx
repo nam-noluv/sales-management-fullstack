@@ -7,6 +7,7 @@ import StatCards from "./StatCards";
 import RecentOrdersTable from "./RecentOrdersTable";
 import TopProductsTable from "./TopProductsTable";
 import dashboardStyles from "../styles";
+import AuthHeaderActions from "../../../components/layout/AuthHeaderActions";
 
 export default function DashboardClient() {
     const { user, logout } = useAuth();
@@ -24,11 +25,7 @@ export default function DashboardClient() {
                         <h1 style={dashboardStyles.pageTitle}>Trang chủ</h1>
                         <p style={dashboardStyles.pageSubtitle}>Xin chào, {user?.email}</p>
                     </div>
-                    <button onClick={logout} style={dashboardStyles.logoutBtn}
-                        onMouseEnter={e => e.currentTarget.style.background = '#7f1d1d'}
-                        onMouseLeave={e => e.currentTarget.style.background = '#991b1b'}>
-                        Thoát đăng nhập
-                    </button>
+                    <AuthHeaderActions user={user} onLogout={logout} />
                 </header>
 
                 <StatCards stats={stats} isAdmin={isAdmin} />

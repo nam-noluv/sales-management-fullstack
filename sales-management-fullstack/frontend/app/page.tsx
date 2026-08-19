@@ -1,8 +1,29 @@
-export default function Home() {
+import Link from "next/link";
+
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-4xl font-bold">Welcome to the Sales Management App</h1>
-      <p className="mt-4 text-lg">Manage your sales efficiently and effectively.</p>
+    <main>
+      <header>
+        <h1>Sales Manager</h1>
+
+        <div>
+          <Link href="/login">
+            Đăng nhập
+          </Link>
+
+          <Link href="/register">
+            Đăng ký
+          </Link>
+        </div>
+      </header>
+
+      <section>
+        <h2>Chào mừng đến với cửa hàng</h2>
+
+        <p>
+          Quản lý và mua sắm sản phẩm dễ dàng.
+        </p>
+      </section>
     </main>
   );
 }
