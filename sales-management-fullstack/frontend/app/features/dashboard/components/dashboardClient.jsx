@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import Sidebar from "../../../components/layout/sidebar";
+import RoleSidebar from "../../../components/layout/RoleSidebar";
 import { useAuth } from "../../../hooks/useAuth";
 import { useDashboardData } from "../hooks/useDashboardData";
 import StatCards from "./StatCards";
@@ -17,13 +17,15 @@ export default function DashboardClient() {
 
     return (
         <div style={dashboardStyles.page}>
-            <Sidebar user={user} />
+            <RoleSidebar user={user} />
 
-            <main style={dashboardStyles.main}>
+            <main style={{ ...dashboardStyles.main, marginLeft: user ? '220px' : 0 }}>
                 <header style={dashboardStyles.header}>
                     <div>
                         <h1 style={dashboardStyles.pageTitle}>Trang chủ</h1>
-                        <p style={dashboardStyles.pageSubtitle}>Xin chào, {user?.email}</p>
+                        <p style={dashboardStyles.pageSubtitle}>
+                            {user ? `Xin chào, ${user.email}` : 'Bạn đang xem ở chế độ khách'}
+                        </p>
                     </div>
                     <AuthHeaderActions user={user} onLogout={logout} />
                 </header>

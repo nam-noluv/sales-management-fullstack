@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import { useState } from "react";
-import Sidebar from "../../../components/layout/sidebar";
+import RoleSidebar from "../../../components/layout/RoleSidebar";
+import AuthHeaderActions from "../../../components/layout/AuthHeaderActions";
 import ConfirmDialog from "../../../components/UI/confirmDialog";
 import { useAuth } from "../../../hooks/useAuth";
 import { useProducts } from "../hooks/useProducts";
@@ -14,7 +15,7 @@ import ProductModal from "./productModal";
 import productStyles from "../styles";
 
 export default function ProductClient({ initialProducts }) {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [search, setSearch] = useState('');
 
     const { products, loading, reload } = useProducts(initialProducts);
@@ -30,7 +31,7 @@ export default function ProductClient({ initialProducts }) {
 
     return (
         <div style={productStyles.page}>
-            <Sidebar user={user} />
+            <RoleSidebar user={user} />
 
             <main style={productStyles.main}>
                 <header style={productStyles.header}>
@@ -38,16 +39,19 @@ export default function ProductClient({ initialProducts }) {
                         <h1 style={productStyles.pageTitle}>Sản phẩm</h1>
                         <p style={productStyles.pageSubtitle}>{products.length} sản phẩm trong kho</p>
                     </div>
-                    {isAdmin && (
-                        <button style={productStyles.addBtn} onClick={openAdd}
-                            onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
-                            onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                            Thêm sản phẩm
-                        </button>
-                    )}
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        {isAdmin && (
+                            <button style={productStyles.addBtn} onClick={openAdd}
+                                onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                Thêm sản phẩm
+                            </button>
+                        )}
+                        <AuthHeaderActions user={user} onLogout={logout} />
+                    </div>
                 </header>
 
                 <ProductSearch value={search} onChange={setSearch} />

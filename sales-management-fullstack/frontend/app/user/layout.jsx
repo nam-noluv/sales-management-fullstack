@@ -1,24 +1,41 @@
 "use client";
 
-import UserSidebar from "../components/layout/UserSidebar";
+import { usePathname } from "next/navigation";
+import { useAuth } from "../hooks/useAuth";
+import Forbidden from "../components/UI/Forbidden";
 
 export default function UserLayout({ children }) {
-    const user = {
-        role: "USER",
-    };
+    const pathname = usePathname();
+    const { user, loadingUser } = useAuth();
 
-    return (
-        <div style={{ minHeight: "100vh" }}>
-            <UserSidebar user={user} />
+    if (loadingUser) {
+        return null;
+    }
 
-            <main
-                style={{
-                    marginLeft: "220px",
-                    minHeight: "100vh",
-                }}
-            >
-                {children}
-            </main>
-        </div>
-    );
+    const isLoginPage = pathname === '/user';
+    if (isLoginPage) {
+        // trang đăng nhập của user
+        // Nhưng admin đã đăng nhập thì không được đứng ở đây
+        if (user?.role === 'ADMIN') {
+            return (<Forbidden
+                message="Bạn không có quyền truy cập vào trang này."
+                backHref="/"
+            />
+            );
+        }
+        return <>{children}</>;
+    }
+
+    // Các trang con: /user/dashboard, /user/my-orders, /user/products...
+    // bắt buộc phải đăng nhập bằng tài khoản CUSTOMER
+    if (!user || user.role !== 'CUSTOMER') {
+        return (
+            <Forbidden
+                message="Bạn cần đăng nhập bằng tài khoản người dùng để xem trang này."
+                backHref="/user"
+            />
+        );
+    }
+
+    return <>{children}</>;
 }

@@ -24,7 +24,11 @@ export function useLogin() {
 
             saveSession(data);
 
-            router.push("/user/dashboard");
+            if (data.user?.role === 'ADMIN') {
+                router.push('/admin');
+            } else {
+                router.push('/user/dashboard');
+            }
         } catch (err) {
             setError(err.message || "Lỗi kết nối đến server");
             console.error(err);

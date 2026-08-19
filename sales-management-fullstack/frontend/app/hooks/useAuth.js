@@ -12,23 +12,30 @@ export function useAuth() {
 
     const fetchProfile = useCallback(async () => {
         try {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+            if (!token) {
+                setUser(null);
+                return;
+            }
+
             const res = await fetchWithToken('/auth/profile');
-            if (!res.ok && res.status === 401) {
+            if (!res.ok) {
+                // token sai/hết hạn -> xoá token, coi như khách, KHÔNG redirect
                 localStorage.removeItem('token');
-                if (!token) { setUser(null); return; }
-                if (!res.ok) { localStorage.removeItem('token'); setUser(null); return; }
+                setUser(null);
+                return;
             }
             const data = await res.json();
             setUser(data);
         } catch (err) {
             console.error(err);
+            setUser(null);
         } finally {
             setLoadingUser(false);
         }
-    }, [router]);
+    }, []);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         void fetchProfile();
     }, [fetchProfile]);
 

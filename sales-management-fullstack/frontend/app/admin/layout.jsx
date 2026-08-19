@@ -1,27 +1,23 @@
 "use client";
 
-import AdminSidebar from "../components/layout/AdminSidebar";
+import { useAuth } from "../hooks/useAuth";
+import Forbidden from "../components/UI/Forbidden";
 
 export default function AdminLayout({ children }) {
-    // Tạm thời lấy user ở đây
-    // Sau này có thể lấy từ context/session
-    const user = {
-        email: "admin@example.com",
-        role: "ADMIN",
-    };
+    const { user, loadingUser } = useAuth();
 
-    return (
-        <div style={{ minHeight: "100vh" }}>
-            <AdminSidebar user={user} />
+    // Đang chờ xác thực
+    if (loadingUser) {
+        return null;
+    }
 
-            <main
-                style={{
-                    marginLeft: "220px",
-                    minHeight: "100vh",
-                }}
-            >
-                {children}
-            </main>
-        </div>
-    );
+    // Chưa đăng nhập hoặc không phải admin -> chặn
+    if (!user || user.role !== 'ADMIN') {
+        return <Forbidden
+            message="Bạn không có quyền truy cập vào trang này."
+            backHref="/"
+        />;
+    }
+
+    return <>{children}</>;
 }

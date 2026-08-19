@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import { useState } from "react";
-import Sidebar from "../../../components/layout/sidebar";
+import RoleSidebar from "../../../components/layout/RoleSidebar";
+import AuthHeaderActions from "../../../components/layout/AuthHeaderActions";
 import ConfirmDialog from "../../../components/UI/confirmDialog";
 import { useAuth } from "../../../hooks/useAuth";
 import { useOrders } from "../hooks/useOrders";
@@ -16,7 +17,7 @@ import EditOrderModal from "./EditOrderModal";
 import orderStyles from "../styles";
 
 export default function OrderClient() {
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
     const [search, setSearch] = useState("");
 
     const { orders, customers, products, loading, reload, isAdmin } = useOrders(user);
@@ -30,7 +31,7 @@ export default function OrderClient() {
 
     return (
         <div style={orderStyles.page}>
-            <Sidebar user={user} />
+            <RoleSidebar user={user} />
 
             <main style={orderStyles.main}>
                 <header style={orderStyles.header}>
@@ -38,14 +39,17 @@ export default function OrderClient() {
                         <h1 style={orderStyles.pageTitle}>Đơn hàng</h1>
                         <p style={orderStyles.pageSubtitle}>{orders.length} đơn hàng</p>
                     </div>
-                    <button style={orderStyles.addBtn} onClick={createOrder.openCreate}
-                        onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
-                        onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                        Tạo đơn hàng
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button style={orderStyles.addBtn} onClick={createOrder.openCreate}
+                            onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
+                            onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Tạo đơn hàng
+                        </button>
+                        <AuthHeaderActions user={user} onLogout={logout} />
+                    </div>
                 </header>
 
                 <OrderSearch value={search} onChange={setSearch} />

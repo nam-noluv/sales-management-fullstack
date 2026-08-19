@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "../../../components/layout/sidebar";
+import RoleSidebar from "../../../components/layout/RoleSidebar";
+import AuthHeaderActions from "../../../components/layout/AuthHeaderActions";
 import ConfirmDialog from "../../../components/UI/confirmDialog";
 import CustomerSearch from "./CustomerSearch";
 import CustomerTable from "./CustomerTable";
@@ -14,7 +15,7 @@ import customerStyles from "../styles";
 import { useAuth } from "../../../hooks/useAuth";
 
 export default function CustomerClient() {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { customers, setCustomers } = useCustomers();
     const [search, setSearch] = useState('');
 
@@ -28,7 +29,7 @@ export default function CustomerClient() {
 
     return (
         <div style={customerStyles.page}>
-            <Sidebar user={user} />
+            <RoleSidebar user={user} />
 
             <main style={customerStyles.main}>
                 <header style={customerStyles.header}>
@@ -36,14 +37,17 @@ export default function CustomerClient() {
                         <h1 style={customerStyles.pageTitle}>Khách hàng</h1>
                         <p style={customerStyles.pageSubtitle}>{customers.length} khách hàng</p>
                     </div>
-                    <button style={customerStyles.addBtn} onClick={openAdd}
-                        onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
-                        onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                        Thêm khách hàng
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button style={customerStyles.addBtn} onClick={openAdd}
+                            onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
+                            onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Thêm khách hàng
+                        </button>
+                        <AuthHeaderActions user={user} onLogout={logout} />
+                    </div>
                 </header>
 
                 <CustomerSearch value={search} onChange={setSearch} />
