@@ -26,6 +26,7 @@ model Product {
 
 enum Role {
   ADMIN
+  SELLER
   CUSTOMER
 }
 

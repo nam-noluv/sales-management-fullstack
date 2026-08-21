@@ -4,14 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
-
-interface RegisterDto {
-  email: string;
-  password: string;
-  name: string;
-  phone: string;
-  address: string;
-}
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,40 +12,57 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
   ) { }
+
   async register(dto: RegisterDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
+
     if (existingUser) {
       throw new BadRequestException('Email already exists');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prisma.$transaction(async (tx) => {
-      const customer = await tx.customer.create({
-        data: {
-          name: dto.name,
-          phone: dto.phone,
-          address: dto.address,
-          email: dto.email,
-        },
+    // ----- Đăng ký NGƯỜI MUA -----
+    if (dto.role === 'CUSTOMER') {
+      const user = await this.prisma.$transaction(async (tx) => {
+        const customer = await tx.customer.create({
+          data: {
+            name: dto.name!,
+            phone: dto.phone!,
+            address: dto.address!,
+            email: dto.email,
+          },
+        });
+
+        return tx.user.create({
+          data: {
+            email: dto.email,
+            password: hashedPassword,
+            role: 'CUSTOMER',
+            customerId: customer.id,
+          },
+        });
       });
 
-      return tx.user.create({
-        data: {
-          email: dto.email,
-          password: hashedPassword,
-          role: 'CUSTOMER',
-          customerId: customer.id,
-        },
-      });
+      return user;
+    }
+
+    // ----- Đăng ký NGƯỜI BÁN -----
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashedPassword,
+        role: 'SELLER',
+        shopName: dto.shopName,
+      },
     });
+
     return user;
   }
 
   async login(email: string, password: string) {
-
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -72,12 +82,14 @@ export class AuthService {
       email: user.email,
       role: user.role,
     });
+
     return {
       access_token: token,
       user: {
         id: user.id,
         email: user.email,
         role: user.role,
+        shopName: user.shopName,
       },
     };
   }
@@ -89,6 +101,7 @@ export class AuthService {
         id: true,
         email: true,
         role: true,
+        shopName: true,
       },
     });
   }
