@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +41,7 @@ export class AuthService {
           data: {
             email: dto.email,
             password: hashedPassword,
-            role: 'CUSTOMER',
+            role: Role.CUSTOMER,
             customerId: customer.id,
           },
         });
@@ -54,7 +55,7 @@ export class AuthService {
       data: {
         email: dto.email,
         password: hashedPassword,
-        role: 'SELLER',
+        role: Role.SELLER,
         shopName: dto.shopName,
       },
     });
