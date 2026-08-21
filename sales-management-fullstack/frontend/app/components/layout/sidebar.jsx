@@ -53,45 +53,6 @@ const sidebarStyles = {
     navItemActive: {
         background: "rgba(255,255,255,0.2)",
     },
-
-    sidebarUser: {
-        padding: "20px",
-        borderTop: "1px solid rgba(255,255,255,0.12)",
-        display: "flex",
-        alignItems: "center",
-        gap: "12px",
-    },
-
-    avatarCircle: {
-        width: "42px",
-        height: "42px",
-        borderRadius: "50%",
-        background: "#1e40af",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#fff",
-        fontWeight: "700",
-        flexShrink: 0,
-    },
-
-    userInfo: {
-        minWidth: 0,
-    },
-
-    userEmail: {
-        fontSize: "14px",
-        color: "#f8fafc",
-        fontWeight: "600",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-    },
-
-    userRole: {
-        fontSize: "12px",
-        color: "#a5b4fc",
-    },
 };
 
 function getNavItems(user) {
@@ -159,25 +120,6 @@ export default function Sidebar({ user }) {
                     );
                 })}
             </nav>
-
-            {/* User */}
-            {user && (
-                <div style={sidebarStyles.sidebarUser}>
-                    <div style={sidebarStyles.avatarCircle}>
-                        {(user.email?.[0] || "U").toUpperCase()}
-                    </div>
-
-                    <div style={sidebarStyles.userInfo}>
-                        <div style={sidebarStyles.userEmail}>
-                            {user.email}
-                        </div>
-
-                        <div style={sidebarStyles.userRole}>
-                            {user.role}
-                        </div>
-                    </div>
-                </div>
-            )}
         </aside>
     );
 }

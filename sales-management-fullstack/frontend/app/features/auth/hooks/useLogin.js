@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { loginRequest, saveSession } from "../services/authService";
 
 export function useLogin() {
-    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -25,15 +23,13 @@ export function useLogin() {
             saveSession(data);
 
             if (data.user?.role === 'ADMIN') {
-                router.push('/admin');
+                window.location.href = '/admin/dashboard';
             } else {
-                router.push('/user/dashboard');
+                window.location.href = '/user/dashboard';
             }
         } catch (err) {
             setError(err.message || "Lỗi kết nối đến server");
             console.error(err);
-        } finally {
-            setLoading(false);
         }
     };
 

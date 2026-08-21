@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -47,7 +47,7 @@ export class OrdersService {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     let customerId: number;
@@ -55,7 +55,7 @@ export class OrdersService {
     // Admin được chọn khách hàng
     if (user.role === 'ADMIN') {
       if (!dto.customerId) {
-        throw new Error('Vui lòng chọn khách hàng');
+        throw new BadRequestException('Vui lòng chọn khách hàng');
       }
 
       customerId = dto.customerId;
@@ -64,10 +64,18 @@ export class OrdersService {
     // Customer chỉ tạo đơn của mình
     else {
       if (!user.customerId) {
-        throw new Error('User chưa liên kết Customer');
+        throw new BadRequestException('User chưa liên kết Customer');
       }
 
       customerId = user.customerId;
+    }
+
+    const customer = await this.prisma.customer.findUnique({
+      where: { id: customerId },
+    });
+
+    if (!customer) {
+      throw new NotFoundException('Customer not found');
     }
 
     const orderItems: {
@@ -84,7 +92,7 @@ export class OrdersService {
       });
 
       if (!product) {
-        throw new Error('Product not found');
+        throw new NotFoundException('Product not found');
       }
 
       total += product.price * item.quantity;

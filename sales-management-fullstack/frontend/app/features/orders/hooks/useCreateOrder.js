@@ -33,7 +33,7 @@ export function useCreateOrder({ isAdmin, onCreated }) {
             onCreated();
         } catch (err) {
             console.error(err);
-            alert("Tạo đơn hàng thất bại");
+            alert(err.message || "Tạo đơn hàng thất bại");
         }
     };
 

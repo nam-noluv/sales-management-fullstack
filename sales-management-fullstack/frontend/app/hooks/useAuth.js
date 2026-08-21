@@ -36,7 +36,8 @@ export function useAuth() {
     }, []);
 
     useEffect(() => {
-        void fetchProfile();
+        const task = Promise.resolve().then(fetchProfile);
+        return () => { void task; };
     }, [fetchProfile]);
 
     const logout = () => {
