@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { loginRequest, saveSession } from "../services/authService";
+import { adminLoginRequest, loginRequest, saveSession } from "../services/authService";
 
-export function useLogin() {
+export function useLogin({ adminOnly = false } = {}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [forbidden, setForbidden] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const togglePassword = () => setShowPassword(prev => !prev);
@@ -15,19 +16,25 @@ export function useLogin() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        setForbidden(false);
         setLoading(true);
 
         try {
-            const data = await loginRequest(email, password);
+            const data = adminOnly
+                ? await adminLoginRequest(email, password)
+                : await loginRequest(email, password);
 
             saveSession(data);
 
-            if (data.user?.role === 'ADMIN') {
+            if (adminOnly) {
                 window.location.href = '/admin/dashboard';
             } else {
                 window.location.href = '/user/dashboard';
             }
         } catch (err) {
+            if (err.status === 403) {
+                setForbidden(true);
+            }
             setError(err.message || "Lỗi kết nối đến server");
             console.error(err);
         }
@@ -37,7 +44,7 @@ export function useLogin() {
         email, setEmail,
         password, setPassword,
         showPassword, togglePassword,
-        error, loading,
+        error, forbidden, loading,
         handleLogin,
     };
 }

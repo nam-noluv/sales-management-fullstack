@@ -20,6 +20,11 @@ export class AuthController {
     return this.authService.login(body.email, body.password);
   }
 
+  @Post('admin/login')
+  adminLogin(@Body() body: LoginDto) {
+    return this.authService.login(body.email, body.password, 'ADMIN');
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Req() req: Request & { user: AuthUser }) {

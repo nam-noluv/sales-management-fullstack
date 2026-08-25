@@ -31,7 +31,7 @@ const styles = {
     },
 };
 
-export default function Forbidden({ message, backLink = "/" }) {
+export default function Forbidden({ message, backHref = "/" }) {
     return (
         <div style={styles.page}>
             <p style={styles.code}>403</p>
@@ -39,7 +39,7 @@ export default function Forbidden({ message, backLink = "/" }) {
             <p style={styles.desc}>
                 {message || 'Xin lỗi, bạn không có quyền truy cập vào trang này.'}
             </p>
-            <Link href={backLink} style={styles.link}>Quay lại trang chủ</Link>
+            <Link href={backHref} style={styles.link}>Quay lại trang chủ</Link>
         </div>
     );
 }

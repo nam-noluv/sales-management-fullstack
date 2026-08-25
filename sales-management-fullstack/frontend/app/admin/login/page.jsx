@@ -6,6 +6,7 @@ import loginStyles from '../../features/auth/styles/loginStyles';
 import { useLogin } from '../../features/auth/hooks/useLogin';
 import { useAuth } from '../../hooks/useAuth';
 import { EyeIcon, EyeOffIcon } from '../../components/UI/eyeIcon';
+import Forbidden from '../../components/UI/Forbidden';
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -15,9 +16,9 @@ export default function AdminLoginPage() {
         email, setEmail,
         password, setPassword,
         showPassword, togglePassword,
-        error, loading,
+        error, forbidden, loading,
         handleLogin,
-    } = useLogin();
+    } = useLogin({ adminOnly: true });
 
     // Đã đăng nhập sẵn bằng ADMIN -> khỏi cần thấy lại form login,
     // đưa thẳng vào khu quản trị luôn
@@ -29,6 +30,15 @@ export default function AdminLoginPage() {
 
     if (loadingUser || user?.role === 'ADMIN') {
         return null; // tránh nháy form login trước khi chuyển trang
+    }
+
+    if (forbidden) {
+        return (
+            <Forbidden
+                message="Tài khoản user không được phép đăng nhập vào khu vực Admin."
+                backHref="/login"
+            />
+        );
     }
 
     return (

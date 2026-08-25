@@ -54,7 +54,7 @@ export function useRegister() {
             return;
         }
         if (password.length < 6) {
-            setError('Mật khẩu phải có ít nhất 6 ký tự');
+            setError('Mật khẩu phải có ít nhất 6 ký tự'); m
             return;
         }
 

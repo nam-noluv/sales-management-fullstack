@@ -1,7 +1,15 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 
 export async function loginRequest(email, password) {
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    return requestLogin('/auth/login', email, password);
+}
+
+export async function adminLoginRequest(email, password) {
+    return requestLogin('/auth/admin/login', email, password);
+}
+
+async function requestLogin(path, email, password) {
+    const res = await fetch(`${API_BASE_URL}${path}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -10,7 +18,9 @@ export async function loginRequest(email, password) {
     const data = await res.json();
 
     if (!res.ok) {
-        throw new Error(data.message || 'Đăng nhập thất bại');
+        const error = new Error(data.message || 'Đăng nhập thất bại');
+        error.status = res.status;
+        throw error;
     }
 
     return data;

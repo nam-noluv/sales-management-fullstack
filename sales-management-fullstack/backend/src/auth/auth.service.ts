@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { Role } from '@prisma/client';
@@ -63,7 +63,7 @@ export class AuthService {
     return user;
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, requiredRole?: Role) {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -77,6 +77,11 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException('incalid password');
     }
+
+    if (requiredRole && user.role !== requiredRole) {
+      throw new ForbiddenException('Tài khoản không có quyền quản trị');
+    }
+
 
     const token = this.jwt.sign({
       id: user.id,

@@ -1,4 +1,4 @@
-import DashboardClient from "./features/dashboard/components/dashboardClient";
+import { redirect } from 'next/navigation';
 
 export const metadata = {
   title: 'Sales Manager',
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return <DashboardClient />;
+  redirect('/admin/dashboard');
 }

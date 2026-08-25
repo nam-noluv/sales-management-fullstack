@@ -15,11 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [
-    AuthService,
-    PrismaService, // thêm dòng này
-    JwtStrategy,
-  ],
+  providers: [AuthService, PrismaService, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule { }
