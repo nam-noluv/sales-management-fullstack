@@ -6,9 +6,15 @@ export async function fetchDashboardStats() {
 }
 
 export async function fetchTopProducts() {
-    const res = await fetchWithToken('/products');
+    // Lấy nhiều 1 chút (limit=50) để có đủ dữ liệu mà sắp xếp/chọn top 5
+    const res = await fetchWithToken('/products?limit=50');
     const data = await res.json();
-    const sorted = (data || []).sort(
+
+    // Từ Phase 7, GET /products trả về { items, total, page, ... } chứ không
+    // còn là mảng trực tiếp nữa -> phải lấy đúng data.items
+    const items = Array.isArray(data) ? data : (data.items || []);
+
+    const sorted = items.sort(
         (a, b) => (b.sold ?? b.revenue ?? 0) - (a.sold ?? a.revenue ?? 0)
     );
     return sorted.slice(0, 5);

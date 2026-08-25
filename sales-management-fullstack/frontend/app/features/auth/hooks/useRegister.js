@@ -6,14 +6,25 @@ import { registerRequest } from "../services/authService";
 
 export function useRegister() {
     const router = useRouter();
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
+
+    // 'CUSTOMER' hoặc 'SELLER' -> quyết định tab đang chọn trên form
+    const [role, setRole] = useState('CUSTOMER');
+
+    // Field dùng chung
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+
+    // Field riêng cho CUSTOMER
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+
+    // Field riêng cho SELLER
+    const [shopName, setShopName] = useState('');
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -26,8 +37,16 @@ export function useRegister() {
         setError('');
         setSuccess('');
 
-        if (!name || !phone || !address || !email || !password || !confirmPassword) {
+        if (!email || !password || !confirmPassword) {
             setError('Vui lòng nhập đầy đủ thông tin');
+            return;
+        }
+        if (role === 'CUSTOMER' && (!name || !phone || !address)) {
+            setError('Vui lòng nhập đầy đủ thông tin');
+            return;
+        }
+        if (role === 'SELLER' && !shopName) {
+            setError('Vui lòng nhập tên cửa hàng');
             return;
         }
         if (password !== confirmPassword) {
@@ -41,9 +60,16 @@ export function useRegister() {
 
         setLoading(true);
         try {
-            await registerRequest({ name, phone, address, email, password });
+            const payload = role === 'CUSTOMER'
+                ? { role, name, phone, address, email, password }
+                : { role, shopName, email, password };
+
+            await registerRequest(payload);
             setSuccess('Tạo tài khoản thành công!');
-            setTimeout(() => router.push('/login'), 600);
+
+            setTimeout(() => {
+                router.push(role === 'SELLER' ? '/seller/login' : '/login');
+            }, 600);
         } catch (err) {
             setError(err.message || 'Lỗi kết nối đến server');
             console.error(err);
@@ -53,7 +79,9 @@ export function useRegister() {
     };
 
     return {
+        role, setRole,
         name, setName, phone, setPhone, address, setAddress,
+        shopName, setShopName,
         email, setEmail, password, setPassword,
         confirmPassword, setConfirmPassword,
         showPassword, togglePassword, showConfirm, toggleConfirm,
