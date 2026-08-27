@@ -1,12 +1,16 @@
 import { fetchWithToken } from '../../../lib/fetchWithToken';
 
-export async function fetchProducts() {
-    const res = await fetchWithToken('/products');
+export async function fetchProducts(params = '') {
+
+    const res = await fetchWithToken(`/products${params}`);
+
     if (!res.ok) {
         throw new Error("Lỗi tải sản phẩm");
     }
+
     const data = await res.json();
-    return Array.isArray(data) ? data : [];
+
+    return data;
 }
 
 export async function createProduct(payload) {

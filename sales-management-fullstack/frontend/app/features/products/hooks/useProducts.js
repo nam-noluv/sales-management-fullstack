@@ -3,17 +3,22 @@
 import { useState, useEffect } from "react";
 import { fetchProducts } from "../services/productService";
 
-export function useProducts(initialProducts) {
-    const [products, setProducts] = useState(Array.isArray(initialProducts) ? initialProducts : []);
+export function useProducts(initialProducts = []) {
+    const [products, setProducts] = useState(
+        Array.isArray(initialProducts) ? initialProducts : []
+    );
+
     const [loading, setLoading] = useState(false);
 
     const reload = async () => {
         setLoading(true);
+
         try {
             const data = await fetchProducts();
-            setProducts(data);
+
+            setProducts(data.items || []);
         } catch (err) {
-            console.error(err);
+            console.error("Lỗi tải sản phẩm:", err);
         } finally {
             setLoading(false);
         }
@@ -24,19 +29,33 @@ export function useProducts(initialProducts) {
 
         const load = async () => {
             setLoading(true);
+
             try {
                 const data = await fetchProducts();
-                if (isMounted) setProducts(data);
+
+                if (isMounted) {
+                    setProducts(data.items || []);
+                }
             } catch (err) {
-                console.error(err);
+                console.error("Lỗi tải sản phẩm:", err);
             } finally {
-                if (isMounted) setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         void load();
-        return () => { isMounted = false; };
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-    return { products, setProducts, loading, reload };
+    return {
+        products,
+        setProducts,
+        loading,
+        reload,
+    };
 }

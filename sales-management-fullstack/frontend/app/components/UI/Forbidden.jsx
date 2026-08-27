@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const styles = {
     page: {
@@ -16,9 +16,22 @@ const styles = {
         textAlign: 'center',
         padding: '24px',
     },
-    code: { fontSize: '64px', fontWeight: '800', color: '#dc2626', margin: 0 },
-    title: { fontSize: '20px', fontWeight: '600', margin: 0 },
-    desc: { fontSize: '14px', color: '#9ca3af', maxWidth: '360px' },
+    code: {
+        fontSize: '64px',
+        fontWeight: '800',
+        color: '#dc2626',
+        margin: 0
+    },
+    title: {
+        fontSize: '20px',
+        fontWeight: '600',
+        margin: 0
+    },
+    desc: {
+        fontSize: '14px',
+        color: '#9ca3af',
+        maxWidth: '360px'
+    },
     link: {
         marginTop: '8px',
         background: '#3b5bdb',
@@ -28,18 +41,40 @@ const styles = {
         textDecoration: 'none',
         fontSize: '14px',
         fontWeight: '500',
+        border: 'none',
+        cursor: 'pointer',
     },
 };
 
 export default function Forbidden({ message, backHref = "/" }) {
+    const router = useRouter();
+
+    const handleBackHome = () => {
+        // Xóa phiên đăng nhập hiện tại
+        localStorage.removeItem("token");
+
+        // Quay về trang chủ
+        router.push(backHref);
+    };
+
     return (
         <div style={styles.page}>
             <p style={styles.code}>403</p>
-            <h1 style={styles.title}>Bạn không có quyền truy cập vào trang này</h1>
+
+            <h1 style={styles.title}>
+                Bạn không có quyền truy cập vào trang này
+            </h1>
+
             <p style={styles.desc}>
                 {message || 'Xin lỗi, bạn không có quyền truy cập vào trang này.'}
             </p>
-            <Link href={backHref} style={styles.link}>Quay lại trang chủ</Link>
+
+            <button
+                onClick={handleBackHome}
+                style={styles.link}
+            >
+                Quay lại trang chủ
+            </button>
         </div>
     );
 }

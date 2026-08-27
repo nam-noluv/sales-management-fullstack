@@ -47,52 +47,35 @@ export class ProductsController {
     });
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
-  }
-
   // ========================
-  // ADMIN + SELLER APIs
+  // ADMIN + SELLER
   // ========================
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'SELLER')
-  create(@Body() createProductDto: CreateProductDto, @Req() req) {
-    return this.productsService.create(createProductDto, req.user);
-  }
-
-  @Patch(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('ADMIN', 'SELLER')
-  update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
+  create(
+    @Body() createProductDto: CreateProductDto,
     @Req() req,
   ) {
-    return this.productsService.update(+id, updateProductDto, req.user);
+    return this.productsService.create(
+      createProductDto,
+      req.user,
+    );
   }
 
-  @Delete(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('ADMIN', 'SELLER')
-  remove(@Param('id') id: string, @Req() req) {
-    return this.productsService.remove(+id, req.user);
-  }
-
-  // Upload 1 file ảnh -> trả về đường dẫn để lưu vào field imageUrl
   @Post('upload')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'SELLER')
-  @UseInterceptors(FileInterceptor('image', productImageMulterOptions))
+  @UseInterceptors(
+    FileInterceptor('image', productImageMulterOptions),
+  )
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     return {
       imageUrl: `/uploads/products/${file.filename}`,
     };
   }
 
-  // Lấy danh sách chỉ gồm sản phẩm CỦA CHÍNH seller đang đăng nhập
   @Get('me/list')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('SELLER')
@@ -109,6 +92,43 @@ export class ProductsController {
         search,
         mine: true,
       },
+      req.user,
+    );
+  }
+
+  // ========================
+  // ID routes
+  // ========================
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productsService.findOne(+id);
+  }
+
+  @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('ADMIN', 'SELLER')
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @Req() req,
+  ) {
+    return this.productsService.update(
+      +id,
+      updateProductDto,
+      req.user,
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('ADMIN', 'SELLER')
+  remove(
+    @Param('id') id: string,
+    @Req() req,
+  ) {
+    return this.productsService.remove(
+      +id,
       req.user,
     );
   }

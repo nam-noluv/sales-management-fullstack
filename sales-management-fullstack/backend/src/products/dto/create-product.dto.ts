@@ -23,6 +23,7 @@ export class CreateProductDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
+  @Min(1)
   categoryId?: number;
 
   @IsOptional()

@@ -1,8 +1,12 @@
-import { getProducts } from "../../../services/api";
 import ProductClient from "../../features/products/components/ProductClient";
+import { getProducts } from "../../../services/api";
 
 export default async function ProductsPage() {
-    const products = await getProducts();
+    const data = await getProducts();
 
-    return <ProductClient initialProducts={products} />;
+    return (
+        <ProductClient
+            initialProducts={data.items || []}
+        />
+    );
 }

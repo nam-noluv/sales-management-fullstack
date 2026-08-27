@@ -14,12 +14,12 @@ import ProductTable from "./productTable";
 import ProductModal from "./productModal";
 import productStyles from "../styles";
 
-export default function ProductClient({ initialProducts }) {
+export default function ProductClient({ initialProducts, publicView = false }) {
     const { user, logout } = useAuth();
     const [search, setSearch] = useState('');
 
     const { products, loading, reload } = useProducts(initialProducts);
-    const isAdmin = user?.role === 'ADMIN';
+    const isAdmin = !publicView && user?.role === 'ADMIN';
 
     const { form, setField, editingId, showModal, openAdd, openEdit, resetForm, handleSubmit } =
         useProductForm(reload);
@@ -31,7 +31,7 @@ export default function ProductClient({ initialProducts }) {
 
     return (
         <div style={productStyles.page}>
-            <RoleSidebar user={user} />
+            {!publicView && <RoleSidebar user={user} />}
 
             <main style={productStyles.main}>
                 <header style={productStyles.header}>
@@ -50,7 +50,9 @@ export default function ProductClient({ initialProducts }) {
                                 Thêm sản phẩm
                             </button>
                         )}
-                        <AuthHeaderActions user={user} onLogout={logout} />
+                        {!publicView && (
+                            <AuthHeaderActions user={user} onLogout={logout} />
+                        )}
                     </div>
                 </header>
 
