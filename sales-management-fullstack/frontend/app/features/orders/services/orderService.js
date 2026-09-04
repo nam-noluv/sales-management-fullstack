@@ -18,7 +18,8 @@ export async function fetchCustomersList() {
 
 export async function fetchProductsList() {
     const res = await fetchWithToken('/products');
-    return res.json();
+    const data = await res.json();
+    return data.items || [];
 }
 
 export async function createOrderRequest(body) {

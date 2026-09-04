@@ -13,6 +13,21 @@ export async function fetchProducts(params = '') {
     return data;
 }
 
+// Upload ảnh riêng, trả về { imageUrl }
+export async function uploadProductImage(file) {
+    const formData = new FormData();
+    formData.append('image', file); // field name phải là 'image' khớp FileInterceptor('image', ...)
+
+    const res = await fetchWithToken('/products/upload', {
+        method: 'POST',
+        body: formData,
+    });
+    if (!res.ok) {
+        throw new Error('Lỗi upload ảnh');
+    }
+    return res.json(); // { imageUrl: "/uploads/products/product-xxx.jpg" }
+}
+
 export async function createProduct(payload) {
     return fetchWithToken('/products', {
         method: 'POST',

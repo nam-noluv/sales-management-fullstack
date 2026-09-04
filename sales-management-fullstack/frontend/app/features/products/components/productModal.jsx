@@ -10,12 +10,33 @@ const FIELDS = [
     { key: 'quantity', label: 'SỐ LƯỢNG', placeholder: 'Nhập số lượng', type: 'number' },
 ];
 
-export default function ProductModal({ form, setField, editingId, onClose, onSubmit }) {
+export default function ProductModal({
+    form, setField, editingId, onClose, onSubmit,
+    imagePreview, onImageChange, uploading,
+}) {
     return (
         <Modal onClose={onClose}>
             <div style={productStyles.modalHeader}>
                 <h2 style={productStyles.modalTitle}>{editingId ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}</h2>
                 <button onClick={onClose} style={productStyles.closeBtn}>✕</button>
+            </div>
+
+            {/* --- Phần chọn ảnh --- */}
+            <div style={productStyles.field}>
+                <label style={productStyles.label}>ẢNH SẢN PHẨM</label>
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={e => onImageChange(e.target.files[0])}
+                    style={productStyles.input}
+                />
+                {imagePreview && (
+                    <img
+                        src={imagePreview}
+                        alt="preview"
+                        style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 8, marginTop: 8 }}
+                    />
+                )}
             </div>
 
             {FIELDS.map(f => (
@@ -39,10 +60,10 @@ export default function ProductModal({ form, setField, editingId, onClose, onSub
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     Hủy
                 </button>
-                <button onClick={onSubmit} style={productStyles.submitBtn}
+                <button onClick={onSubmit} disabled={uploading} style={productStyles.submitBtn}
                     onMouseEnter={e => e.currentTarget.style.background = '#1d4ed8'}
                     onMouseLeave={e => e.currentTarget.style.background = '#2563eb'}>
-                    {editingId ? 'Cập nhật' : 'Thêm sản phẩm'}
+                    {uploading ? 'Đang tải ảnh...' : (editingId ? 'Cập nhật' : 'Thêm sản phẩm')}
                 </button>
             </div>
         </Modal>

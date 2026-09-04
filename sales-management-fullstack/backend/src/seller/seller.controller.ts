@@ -26,9 +26,7 @@ import { Roles } from '../auth/roles.decorator';
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles('SELLER')
 export class SellerController {
-  constructor(
-    private readonly sellerService: SellerService,
-  ) { }
+  constructor(private readonly sellerService: SellerService) {}
 
   // =========================
   // PROFILE
@@ -69,35 +67,23 @@ export class SellerController {
   }
 
   @Get('products/:id')
-  getProduct(
-    @Req() req: Request,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  getProduct(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     const user = req.user as {
       id: number;
       role: string;
     };
 
-    return this.sellerService.getProduct(
-      user.id,
-      id,
-    );
+    return this.sellerService.getProduct(user.id, id);
   }
 
   @Post('products')
-  createProduct(
-    @Req() req: Request,
-    @Body() dto: CreateSellerProductDto,
-  ) {
+  createProduct(@Req() req: Request, @Body() dto: CreateSellerProductDto) {
     const user = req.user as {
       id: number;
       role: string;
     };
 
-    return this.sellerService.createProduct(
-      user.id,
-      dto,
-    );
+    return this.sellerService.createProduct(user.id, dto);
   }
 
   @Patch('products/:id')
@@ -111,26 +97,16 @@ export class SellerController {
       role: string;
     };
 
-    return this.sellerService.updateProduct(
-      user.id,
-      id,
-      dto,
-    );
+    return this.sellerService.updateProduct(user.id, id, dto);
   }
 
   @Delete('products/:id')
-  deleteProduct(
-    @Req() req: Request,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  deleteProduct(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
     const user = req.user as {
       id: number;
       role: string;
     };
 
-    return this.sellerService.deleteProduct(
-      user.id,
-      id,
-    );
+    return this.sellerService.deleteProduct(user.id, id);
   }
 }

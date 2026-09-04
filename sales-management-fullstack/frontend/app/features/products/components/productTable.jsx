@@ -2,8 +2,9 @@
 
 import productStyles from "../styles";
 import { getQtyStyle } from "../utils/productHelpers";
+import { API_BASE_URL } from "../../../lib/fetchWithToken";
 
-const COLUMNS = ['Tên sản phẩm', 'Mô tả', 'Giá', 'Số lượng', 'Thao tác'];
+const COLUMNS = ['Ảnh', 'Tên sản phẩm', 'Mô tả', 'Giá', 'Số lượng', 'Thao tác'];
 
 export default function ProductTable({ products, loading, isAdmin, onEdit, onDelete }) {
     return (
@@ -14,9 +15,9 @@ export default function ProductTable({ products, loading, isAdmin, onEdit, onDel
                 </thead>
                 <tbody>
                     {loading ? (
-                        <tr><td colSpan={5} style={productStyles.emptyCell}>Đang tải...</td></tr>
+                        <tr><td colSpan={6} style={productStyles.emptyCell}>Đang tải...</td></tr>
                     ) : products.length === 0 ? (
-                        <tr><td colSpan={5} style={productStyles.emptyCell}>Không có sản phẩm nào</td></tr>
+                        <tr><td colSpan={6} style={productStyles.emptyCell}>Không có sản phẩm nào</td></tr>
                     ) : products.map(item => (
                         <ProductRow key={item.id} item={item} isAdmin={isAdmin} onEdit={onEdit} onDelete={onDelete} />
                     ))}
@@ -27,10 +28,32 @@ export default function ProductTable({ products, loading, isAdmin, onEdit, onDel
 }
 
 function ProductRow({ item, isAdmin, onEdit, onDelete }) {
+    const imageSrc = item.imageUrl
+        ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${API_BASE_URL}${item.imageUrl}`)
+        : null;
+
     return (
         <tr style={productStyles.tr}
             onMouseEnter={e => e.currentTarget.style.background = '#1f2937'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <td style={productStyles.td}>
+                <div style={{
+                    width: '48px', height: '48px', borderRadius: '6px',
+                    background: '#111827', overflow: 'hidden',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                }}>
+                    {imageSrc ? (
+                        <img
+                            src={imageSrc}
+                            alt={item.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    ) : (
+                        <span style={{ fontSize: '10px', color: '#4b5563' }}>—</span>
+                    )}
+                </div>
+            </td>
             <td style={productStyles.td}>
                 <div style={productStyles.productName}>{item.name}</div>
             </td>

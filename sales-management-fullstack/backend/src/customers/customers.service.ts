@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CustomersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
   create(createCustomerDto: CreateCustomerDto) {
     return this.prisma.customer.create({
       data: createCustomerDto,
@@ -37,7 +37,7 @@ export class CustomersService {
         select: { id: true },
       });
 
-      const orderIds = orders.map(o => o.id);
+      const orderIds = orders.map((o) => o.id);
 
       if (orderIds.length > 0) {
         await tx.orderItem.deleteMany({

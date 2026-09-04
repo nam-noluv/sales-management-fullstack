@@ -21,8 +21,11 @@ export default function ProductClient({ initialProducts, publicView = false }) {
     const { products, loading, reload } = useProducts(initialProducts);
     const isAdmin = !publicView && user?.role === 'ADMIN';
 
-    const { form, setField, editingId, showModal, openAdd, openEdit, resetForm, handleSubmit } =
-        useProductForm(reload);
+    // 👇 lấy thêm imagePreview, handleImageChange, uploading
+    const {
+        form, setField, editingId, showModal, openAdd, openEdit, resetForm, handleSubmit,
+        imagePreview, handleImageChange, uploading,
+    } = useProductForm(reload);
 
     const { deleteConfirmId, requestDelete, cancelDelete, confirmDelete } =
         useDeleteProduct(reload);
@@ -61,7 +64,16 @@ export default function ProductClient({ initialProducts, publicView = false }) {
             </main>
 
             {showModal && (
-                <ProductModal form={form} setField={setField} editingId={editingId} onClose={resetForm} onSubmit={handleSubmit} />
+                <ProductModal
+                    form={form}
+                    setField={setField}
+                    editingId={editingId}
+                    onClose={resetForm}
+                    onSubmit={handleSubmit}
+                    imagePreview={imagePreview}
+                    onImageChange={handleImageChange}
+                    uploading={uploading}
+                />
             )}
 
             {deleteConfirmId && (

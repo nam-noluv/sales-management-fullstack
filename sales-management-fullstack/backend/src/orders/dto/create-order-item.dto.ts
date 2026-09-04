@@ -1,9 +1,9 @@
-import { IsInt } from "class-validator";
+import { IsInt } from 'class-validator';
 
 export class CreateOrderItemDto {
-    @IsInt()
-    productId: number;
+  @IsInt()
+  productId: number;
 
-    @IsInt()
-    quantity: number;
+  @IsInt()
+  quantity: number;
 }

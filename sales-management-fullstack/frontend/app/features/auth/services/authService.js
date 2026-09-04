@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001').replace(/\/$/, '');
 
 export async function loginRequest(email, password) {
     return requestLogin('/auth/login', email, password);
@@ -9,18 +9,28 @@ export async function adminLoginRequest(email, password) {
 }
 
 async function requestLogin(path, email, password) {
-    const res = await fetch(`${API_BASE_URL}${path}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-    });
+    let res;
+    try {
+        res = await fetch(`${API_BASE_URL}${path}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.trim(), password }),
+        });
+    } catch {
+        throw new Error('Không thể kết nối đến máy chủ');
+    }
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-        const error = new Error(data.message || 'Đăng nhập thất bại');
+        const message = Array.isArray(data.message) ? data.message.join(', ') : data.message;
+        const error = new Error(message || 'Đăng nhập thất bại');
         error.status = res.status;
         throw error;
+    }
+
+    if (!data.access_token || !data.user) {
+        throw new Error('Phản hồi đăng nhập không hợp lệ');
     }
 
     return data;

@@ -5,6 +5,7 @@ import { Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { Role } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -22,7 +23,7 @@ export class AuthController {
 
   @Post('admin/login')
   adminLogin(@Body() body: LoginDto) {
-    return this.authService.login(body.email, body.password, 'ADMIN');
+    return this.authService.login(body.email, body.password, Role.ADMIN);
   }
 
   @UseGuards(AuthGuard('jwt'))

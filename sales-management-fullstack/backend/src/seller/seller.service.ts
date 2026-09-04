@@ -11,7 +11,7 @@ import { UpdateSellerProductDto } from './dto/update-seller-product.dto';
 
 @Injectable()
 export class SellerService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   // =========================
   // PROFILE
@@ -80,10 +80,7 @@ export class SellerService {
     return product;
   }
 
-  async createProduct(
-    userId: number,
-    dto: CreateSellerProductDto,
-  ) {
+  async createProduct(userId: number, dto: CreateSellerProductDto) {
     return this.prisma.product.create({
       data: {
         name: dto.name,
@@ -132,10 +129,7 @@ export class SellerService {
     });
   }
 
-  async deleteProduct(
-    userId: number,
-    productId: number,
-  ) {
+  async deleteProduct(userId: number, productId: number) {
     const product = await this.prisma.product.findFirst({
       where: {
         id: productId,
@@ -170,9 +164,7 @@ export class SellerService {
     });
 
     if (!seller || seller.role !== 'SELLER') {
-      throw new ForbiddenException(
-        'Tài khoản không phải Seller',
-      );
+      throw new ForbiddenException('Tài khoản không phải Seller');
     }
 
     const totalProducts = await this.prisma.product.count({
@@ -193,20 +185,15 @@ export class SellerService {
       },
     });
 
-    const totalOrders = new Set(
-      orderItems.map((item) => item.orderId),
-    ).size;
+    const totalOrders = new Set(orderItems.map((item) => item.orderId)).size;
 
     const totalCustomers = new Set(
       orderItems.map((item) => item.order.customerId),
     ).size;
 
-    const revenue = orderItems.reduce(
-      (total, item) => {
-        return total + item.price * item.quantity;
-      },
-      0,
-    );
+    const revenue = orderItems.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
 
     const recentOrders = await this.prisma.order.findMany({
       where: {

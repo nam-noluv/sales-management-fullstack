@@ -15,12 +15,10 @@ async function bootstrap() {
     }),
   );
 
-  // Cho phép truy cập file trong thư mục uploads/ qua URL dạng:
-  // http://localhost:3001/uploads/products/ten-file.jpg
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
     prefix: '/uploads/',
   });
 
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(3001);
 }
 bootstrap();

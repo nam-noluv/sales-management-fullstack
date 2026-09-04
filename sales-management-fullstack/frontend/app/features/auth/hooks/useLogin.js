@@ -37,6 +37,8 @@ export function useLogin({ adminOnly = false } = {}) {
             }
             setError(err.message || "Lỗi kết nối đến server");
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 

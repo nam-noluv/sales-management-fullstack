@@ -16,7 +16,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) { }
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   // Ai cũng xem được danh sách danh mục (để hiện dropdown filter)
   @Get()

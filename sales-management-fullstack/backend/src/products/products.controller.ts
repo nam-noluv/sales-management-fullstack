@@ -26,7 +26,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   // ========================
   // Public APIs
@@ -54,22 +54,14 @@ export class ProductsController {
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'SELLER')
-  create(
-    @Body() createProductDto: CreateProductDto,
-    @Req() req,
-  ) {
-    return this.productsService.create(
-      createProductDto,
-      req.user,
-    );
+  create(@Body() createProductDto: CreateProductDto, @Req() req) {
+    return this.productsService.create(createProductDto, req.user);
   }
 
   @Post('upload')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'SELLER')
-  @UseInterceptors(
-    FileInterceptor('image', productImageMulterOptions),
-  )
+  @UseInterceptors(FileInterceptor('image', productImageMulterOptions))
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     return {
       imageUrl: `/uploads/products/${file.filename}`,
@@ -113,23 +105,13 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
     @Req() req,
   ) {
-    return this.productsService.update(
-      +id,
-      updateProductDto,
-      req.user,
-    );
+    return this.productsService.update(+id, updateProductDto, req.user);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN', 'SELLER')
-  remove(
-    @Param('id') id: string,
-    @Req() req,
-  ) {
-    return this.productsService.remove(
-      +id,
-      req.user,
-    );
+  remove(@Param('id') id: string, @Req() req) {
+    return this.productsService.remove(+id, req.user);
   }
 }

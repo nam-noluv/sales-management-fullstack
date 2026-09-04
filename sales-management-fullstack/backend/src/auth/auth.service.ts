@@ -12,11 +12,12 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
-  ) { }
+  ) {}
 
   async register(dto: RegisterDto) {
+    const email = dto.email.trim().toLowerCase();
     const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email },
     });
 
     if (existingUser) {
@@ -33,13 +34,13 @@ export class AuthService {
             name: dto.name!,
             phone: dto.phone!,
             address: dto.address!,
-            email: dto.email,
+            email,
           },
         });
 
         return tx.user.create({
           data: {
-            email: dto.email,
+            email,
             password: hashedPassword,
             role: Role.CUSTOMER,
             customerId: customer.id,
@@ -53,7 +54,7 @@ export class AuthService {
     // ----- Đăng ký NGƯỜI BÁN -----
     const user = await this.prisma.user.create({
       data: {
-        email: dto.email,
+        email,
         password: hashedPassword,
         role: Role.SELLER,
         shopName: dto.shopName,
@@ -65,7 +66,7 @@ export class AuthService {
 
   async login(email: string, password: string, requiredRole?: Role) {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email: email.trim().toLowerCase() },
     });
 
     if (!user) {
@@ -75,13 +76,12 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new UnauthorizedException('incalid password');
+      throw new UnauthorizedException('Invalid password');
     }
 
     if (requiredRole && user.role !== requiredRole) {
       throw new ForbiddenException('Tài khoản không có quyền quản trị');
     }
-
 
     const token = this.jwt.sign({
       id: user.id,
